@@ -1,0 +1,59 @@
+{% extends 'blog/base.html' %}
+{% load blog_tags %}
+
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{%  block content %}
+    <h1>{{ post.title }}</h1>
+    <p class="tags">Теги: {{ post.tags.all|join:", " }}</p>
+    <p class="date">
+        Опубликован: {{ post.publish }} Кем: {{ post.author }}
+        {{ post.body|markdown }}
+    </p>
+    <p>
+        <a href="#">Поделиться этой статьей</a>
+    </p>
+
+    <div>
+        <h2>Похожие статьи:</h2>
+        <div>
+            {% for similar_post in similar_posts %}
+                <p>
+                    <a href="{{ similar_post.get_absolute_url }}">{{ similar_post.title }}</a>
+                </p>
+            {% endfor %}
+        </div>
+    </div>
+
+
+    {% with comments.count as total_comments %}
+        <h2>{{ total_comments }} комментариев {{ total_comments|pluralize }}</h2>
+    {% endwith %}
+
+    {% for comment in comments %}
+        <div class="comment">
+            <p class="info">
+                Комментарий {{ forloop.counter }} - {{ comment.name }}
+                {{ comment.created }}
+            </p>
+            <p>
+                {{ comment.body|linebreaks }}
+            </p>
+        </div>
+    {% empty %}
+        <p>Ни одного комментария нет.</p>
+    {% endfor %}
+
+    {% if new_comment %}
+        <h2>Ваш комментарий был успешно добален!</h2>
+    {% else %}
+        <h2>Добавить комментарий</h2>
+        <form action="." method="post">
+            {{ comment_form.as_p }}
+            {% csrf_token %}
+            <p><input type="submit" value="Отправить"></p>
+        </form>
+    {% endif %}
+
+{% endblock %}

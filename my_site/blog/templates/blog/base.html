@@ -1,0 +1,39 @@
+{% load blog_tags %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %} {% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/blog.css' %}">
+</head>
+<body>
+    <div id="content">
+        {% block content %} {% endblock %}
+    </div>
+    <div id="sidebar">
+        <h2>Мой блог</h2>
+        <p>Это мой блог.</p>
+        <p>Я написал {% total_posts %} постов</p>
+        <h3>
+            Последние посты:
+        </h3>
+        {% show_latest_posts 3 %}
+
+        <h3>Самые комментируемые посты:</h3>
+        {% get_most_commented_posts as most_comments_posts %}
+        <ul>
+            {% for post in most_comments_posts %}
+                <li>
+                    <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <p><a href="{% url 'blog:post_feed' %}">Подписка на мои новости</a></p>
+    </div>
+    
+</body>
+</html>
